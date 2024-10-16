@@ -1,24 +1,68 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Biblioteca Virtual</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="App">
-    <h1>Biblioteca Virtual</h1>
-    <form id="search-form">
-      <input type="text" id="search-query" placeholder="Buscar..." />
-      <button type="submit">Buscar</button>
-    </form>
-    
-    <div id="results" class="results"></div>
-    
-    <div id="pagination" class="pagination"></div>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca Digital</title>
+    <link rel="stylesheet" href="styles.css" />
 
-  <script src="app.js"></script>
-</body>
+    <script
+      src="https://kit.fontawesome.com/4362ce3a8a.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <h3 class="collapsible">Categorías</h3>
+        <br />
+        <hr />
+        <br />
+        <button class="accordion">
+          Categorías <span class="icon">+</span>
+        </button>
+        <div class="panel">
+          <p class="panel-option">Ciencia de datos</p>
+          <p class="panel-option">Desarrollo de software</p>
+          <p class="panel-option">Lógica de programación</p>
+        </div>
+
+        <button class="accordion">
+          Lenguaje de Programación <span class="icon">+</span>
+        </button>
+        <div class="panel">
+          <p class="panel-option">JavaScript</p>
+          <p class="panel-option">Python</p>
+          <p class="panel-option">Java</p>
+          <p class="panel-option">C#</p>
+          <p class="panel-option">Go</p>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="search-bar">
+          <div class="search-content">
+            <input
+            type="text"
+            id="search-input"
+            placeholder="Escribe para buscar"
+          />
+          <button id="clear-button"><i class="fas fa-times"></i></button>
+          </div>
+
+          <button id="search-button">
+            <i class="fas fa-search"></i> Buscar
+          </button>
+        </div>
+
+        <div class="books-container" id="books-container"></div>
+
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+
+    <script src="accordion.js"></script>
+    <script src="searchbar.js"></script>
+    <script src="app.js"></script>
+  </body>
 </html>

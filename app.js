@@ -1,97 +1,117 @@
-
-
-document.addEventListener('DOMContentLoaded', function () {
-  const searchForm = document.getElementById('search-form');
-  const searchQueryInput = document.getElementById('search-query');
-  const resultsDiv = document.getElementById('results');
-  const paginationDiv = document.getElementById('pagination');
-
-  let currentQuery = '';
+document.addEventListener("DOMContentLoaded", () => {
+  const searchButton = document.getElementById("search-button");
+  const searchInput = document.getElementById("search-input");
+  const clearButton = document.getElementById("clear-button");
+  const booksContainer = document.getElementById("books-container");
+  const pagination = document.getElementById("pagination");
+  const accordions = document.querySelectorAll(".accordion");
   let currentPage = 1;
-
-  // Función para obtener los datos de la API
-  async function fetchData(query, page = 1) {
-    try {
-      const response = await fetch(`https://www.loc.gov/search/?fa=online-format:pdf&fo=json&q=${query}&sp=${page}`);
-      const data = await response.json();
-      displayResults(data.results);
-      setupPagination(data.pagination);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  }
-
-  // Función para manejar la búsqueda
-  searchForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    currentQuery = searchQueryInput.value;
-    currentPage = 1; // Reiniciar a la primera página en nueva búsqueda
-    fetchData(currentQuery, currentPage);
+  let totalResults = 0;
+  let resultsPerPage = 10;
+  //acordion de categorias
+  accordions.forEach((accordion) => {
+    accordion.addEventListener("click", function () {
+      this.classList.toggle("active");
+    });
   });
 
-  // Función para mostrar los resultados en pantalla
-  function displayResults(results) {
-    resultsDiv.innerHTML = ''; // Limpiar resultados anteriores
-    if (results.length === 0) {
-      resultsDiv.innerHTML = '<p>No se encontraron resultados.</p>';
+  document.querySelectorAll(".panel-option").forEach(function (option) {
+    option.addEventListener("click", function () {
+      const textoSeleccionado = this.textContent.trim();
+      fetchBooks(textoSeleccionado, 1);
+    });
+  });
+  //busqueda en la api
+  const fetchBooks = async (query, page = 1) => {
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${query}&startIndex=${
+      (page - 1) * resultsPerPage
+    }&maxResults=${resultsPerPage}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(url);
+    console.log(data);
+    totalResults = data.totalItems;
+    displayBooks(data.items);
+    displayPagination(totalResults, page, query);
+  };
+  //mostrar las tarjetas con los libros
+  const displayBooks = (books) => {
+    booksContainer.innerHTML = "";
+    books.forEach((book) => {
+      const bookCard = document.createElement("div");
+      bookCard.classList.add("book-card");
+      const coverImg = book.volumeInfo.imageLinks
+        ? book.volumeInfo.imageLinks.thumbnail
+        : "https://via.placeholder.com/150";
+      bookCard.innerHTML = `
+              <img src="${coverImg}" alt="${book.volumeInfo.title}">
+              <h3>${book.volumeInfo.title}</h3>
+              <p>${
+                book.volumeInfo.authors
+                  ? book.volumeInfo.authors.join(", ")
+                  : "Autor Desconocido"
+              }</p>
+          `;
+      bookCard.addEventListener("click", () => {
+        window.open(book.volumeInfo.previewLink, "_blank");
+      });
+      booksContainer.appendChild(bookCard);
+    });
+  };
+
+  //mostrar la paginacion
+
+  //ADVERTENCIA
+  //El numero de paginas se calcula con el dato de totalItems que esta en la respuesta del api
+  // pero parece que el dato varia segun startIndex
+
+  const displayPagination = (totalResults, page, query) => {
+    pagination.innerHTML = "";
+
+    const createPageButton = (pageNumber) => {
+      const pageButton = document.createElement("button");
+      pageButton.textContent = pageNumber;
+      if (pageNumber === page) {
+        pageButton.classList.add("active-page-button");
+      }
+      pageButton.addEventListener("click", () => {
+        currentPage = pageNumber;
+        fetchBooks(query, pageNumber);
+      });
+      return pageButton;
+    };
+
+    // Mostrar mensaje si no hay resultados
+    if (totalResults === 0) {
+      pagination.textContent = "No se encontraron resultados.";
       return;
     }
-console.log(results);
-    results.forEach(result => {
-      const resultItem = document.createElement('div');
-      resultItem.classList.add('result-item');
 
-      resultItem.innerHTML = `
-        <h3>${result.title}</h3>
-        <p>${result.description ? result.description[0] : 'Sin descripción'}</p>
-        <img src="${result.image_url ? result.image_url[0] : '#'}" alt="${result.title}" />
-        <a href="${result.url}" target="_blank" rel="noopener noreferrer">Ver más detalles</a>
-      `;
-
-      resultsDiv.appendChild(resultItem);
-    });
-  }
-
-  // Función para configurar los botones de paginación
-  function setupPagination(pagination) {
-    paginationDiv.innerHTML = ''; // Limpiar paginación anterior
-
-    if (pagination.previous) {
-      const prevButton = createPageButton('Anterior', currentPage - 1);
-      paginationDiv.appendChild(prevButton);
-    }
-
-    pagination.page_list.forEach(page => {
-      if (page.number !== '...') {
-        const pageButton = createPageButton(page.number, page.number);
-        paginationDiv.appendChild(pageButton);
-      } else {
-        const ellipsis = document.createElement('span');
-        ellipsis.textContent = '...';
-        paginationDiv.appendChild(ellipsis);
+    if (page < 5) {
+      for (let i = 1; i <= page; i++) {
+        pagination.appendChild(createPageButton(i));
       }
-    });
-
-    if (pagination.next) {
-      const nextButton = createPageButton('Siguiente', currentPage + 1);
-      paginationDiv.appendChild(nextButton);
-    }
-  }
-
-  // Función para crear un botón de paginación
-  function createPageButton(text, pageNumber) {
-    const button = document.createElement('button');
-    button.textContent = text;
-    button.classList.add('page-btn');
-    if (pageNumber == currentPage) {
-      button.classList.add('active');
+    } else {
+      // Show surrounding pages and ellipsis on both sides
+      pagination.appendChild(createPageButton(1));
+      pagination.appendChild(document.createTextNode("..."));
+      for (let i = page - 3; i <= page; i++) {
+        pagination.appendChild(createPageButton(i));
+      }
     }
 
-    button.addEventListener('click', () => {
-      currentPage = pageNumber;
-      fetchData(currentQuery, currentPage);
-    });
+    // Agregar un botón "Siguiente" al final
 
-    return button;
-  }
+    const nextButton = document.createElement("button");
+    nextButton.textContent = "Siguiente";
+    nextButton.addEventListener("click", () => {
+      currentPage++;
+      fetchBooks(query, currentPage);
+    });
+    pagination.appendChild(nextButton);
+  };
+
+  searchButton.addEventListener("click", () => {
+    fetchBooks(searchInput.value, 1);
+  });
 });

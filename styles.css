@@ -1,59 +1,206 @@
-.App {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: Arial, sans-serif;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
 }
 
-form {
-  margin-bottom: 20px;
-  display: flex;
-}
-
-input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-
-button {
-  padding: 10px 15px;
-  background-color: #007BFF;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.results {
+.container {
   display: flex;
   flex-wrap: wrap;
 }
 
-.result-item {
-  width: 48%;
-  margin: 1%;
-  padding: 10px;
-  border: 1px solid #ccc;
+.sidebar {
+  margin: 40px 0;
+  width: 250px;
+  padding: 20px;
 }
 
-.result-item img {
+.accordion {
+  background-color: #eee;
+  color: #5f5f5f;
+  cursor: pointer;
+  padding: 18px;
   width: 100%;
-  height: auto;
-}
-
-.pagination {
+  font-weight: 600;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
   display: flex;
-  justify-content: center;
-  margin-top: 20px;
+  justify-content: space-between;
+  align-items: center;
 }
 
-button.page-btn {
-  margin: 0 5px;
-  padding: 5px 10px;
+.active,
+.accordion:hover {
+  background-color: #ccc;
+}
+
+.panel {
+  padding: 0px;
+  border: solid 1px #ccc;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+
+.panel .panel-option {
+  padding: 9px 18px;
+  background-color: white;
+
+  color: #838383;
+  font-weight: 500;
+  cursor: pointer;
+}
+.panel .panel-option:hover {
+  padding: 9px 18px;
+  background-color: #7548ff;
+
+  color: #ffffff;
+  font-weight: 500;
   cursor: pointer;
 }
 
-button.active {
-  background-color: #007BFF;
+.icon {
+  font-size: 20px;
+  margin-left: 10px;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center; /* Centrar verticalmente los elementos */
+  margin: 20px 0;
+  position: relative; /* Esto permite que los elementos posicionados dentro sean relativos al contenedor */
+}
+
+.search-content {
+  display: flex;
+  width: 100%;
+  align-items: center; 
+  position: relative; /* Esto permite que los elementos posicionados dentro sean relativos al contenedor */
+}
+
+#search-input {
+  flex-grow: 1;
+  width: 80%;
+  padding: 25px 15px;
+  border-radius: 25px;
+  border: none;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  position: relative; /* Mantiene la posición para el botón flotante */
+}
+
+#search-input:focus {
+  outline: none;
+  background-color: #f8f8f8;
+}
+
+#search-button {
+  padding: 25px 20px;
+  background-color: #f39a29;
   color: white;
+  border: none;
+  border-radius: 25px;
+  max-lines: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+#clear-button {
+  position: absolute;
+  right: 3%; /* Posiciona la "x" a la derecha dentro del input */
+  margin-right: 6px;
+  top: 50%; /* Centra verticalmente la "x" en el input */
+  transform: translateY(-50%); /* Ajusta para alinear el botón verticalmente */
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  display: none;
+}
+
+#clear-button i {
+  cursor: pointer;
+}
+
+
+.books-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.book-card {
+  background-color: #f8f8f8;
+  border-radius: 20px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.book-card:hover {
+  transform: scale(1.05);
+}
+
+.book-card img {
+  width: 200px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+.book-card h3 {
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination button {
+  background-color: #7548ff;
+  color: white;
+  padding: 10px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #f39a29;
+}
+
+.active-page-button {
+  background-color: #f39a29 !important;
+  color: white !important;
+  font-weight: bold !important;
+  border: 2px solid #f39a29 !important;
+}
+
+@media screen and (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .main-content {
+    width: 100%;
+  }
 }
