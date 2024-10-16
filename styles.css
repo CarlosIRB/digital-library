@@ -1,19 +1,59 @@
-.results-container, .details-container {
-    font-family: Arial, sans-serif;
-    max-width: 800px;
-    margin: 20px auto;
-  }
-  
-  .details-container {
-    margin-top: 20px;
-  }
-  
-  button {
-    padding: 10px 15px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
+.App {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+form {
+  margin-bottom: 20px;
+  display: flex;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.results {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.result-item {
+  width: 48%;
+  margin: 1%;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.result-item img {
+  width: 100%;
+  height: auto;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+button.page-btn {
+  margin: 0 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+button.active {
+  background-color: #007BFF;
+  color: white;
+}
