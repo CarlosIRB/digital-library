@@ -28,8 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }&maxResults=${resultsPerPage}`;
     const response = await fetch(url);
     const data = await response.json();
-    console.log(url);
-    console.log(data);
     totalResults = data.totalItems;
     displayBooks(data.items);
     displayPagination(totalResults, page, query);
@@ -92,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         pagination.appendChild(createPageButton(i));
       }
     } else {
-      // Show surrounding pages and ellipsis on both sides
+      
       pagination.appendChild(createPageButton(1));
       pagination.appendChild(document.createTextNode("..."));
       for (let i = page - 3; i <= page; i++) {

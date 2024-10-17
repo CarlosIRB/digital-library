@@ -4,8 +4,215 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Biblioteca Digital</title>
-    <link rel="stylesheet" href="styles.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .sidebar {
+        margin: 40px 0;
+        width: 250px;
+        padding: 20px;
+      }
+
+      .accordion {
+        background-color: #eee;
+        color: #5f5f5f;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        font-weight: 600;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+        transition: 0.4s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .active,
+      .accordion:hover {
+        background-color: #ccc;
+      }
+
+      .panel {
+        padding: 0px;
+        border: solid 1px #ccc;
+        background-color: white;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+      }
+
+      .panel .panel-option {
+        padding: 9px 18px;
+        background-color: white;
+
+        color: #838383;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .panel .panel-option:hover {
+        padding: 9px 18px;
+        background-color: #7548ff;
+
+        color: #ffffff;
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      .icon {
+        font-size: 20px;
+        margin-left: 10px;
+      }
+
+      .main-content {
+        flex-grow: 1;
+        padding: 20px;
+      }
+
+      .search-bar {
+        display: flex;
+        align-items: center; /* Centrar verticalmente los elementos */
+        margin: 20px 0;
+        position: relative; /* Esto permite que los elementos posicionados dentro sean relativos al contenedor */
+      }
+
+      .search-content {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        position: relative; /* Esto permite que los elementos posicionados dentro sean relativos al contenedor */
+      }
+
+      #search-input {
+        flex-grow: 1;
+        width: 80%;
+        padding: 25px 15px;
+        border-radius: 25px;
+        border: none;
+        background-color: #f8f8f8;
+        font-size: 16px;
+        position: relative; /* Mantiene la posición para el botón flotante */
+      }
+
+      #search-input:focus {
+        outline: none;
+        background-color: #f8f8f8;
+      }
+
+      #search-button {
+        padding: 25px 20px;
+        background-color: #f39a29;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        max-lines: 1;
+        white-space: nowrap;
+        cursor: pointer;
+        margin-left: 10px;
+      }
+
+      #clear-button {
+        position: absolute;
+        right: 3%; /* Posiciona la "x" a la derecha dentro del input */
+        margin-right: 6px;
+        top: 50%; /* Centra verticalmente la "x" en el input */
+        transform: translateY(
+          -50%
+        ); /* Ajusta para alinear el botón verticalmente */
+        background: transparent;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        display: none;
+      }
+
+      #clear-button i {
+        cursor: pointer;
+      }
+
+      .books-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .book-card {
+        background-color: #f8f8f8;
+        border-radius: 20px;
+        padding: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .book-card:hover {
+        transform: scale(1.05);
+      }
+
+      .book-card img {
+        width: 200px;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 15px;
+      }
+
+      .book-card h3 {
+        font-size: 18px;
+        margin-top: 10px;
+      }
+
+      .pagination {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .pagination button {
+        background-color: #7548ff;
+        color: white;
+        padding: 10px;
+        margin: 0 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .pagination button.active {
+        background-color: #f39a29;
+      }
+
+      .active-page-button {
+        background-color: #f39a29 !important;
+        color: white !important;
+        font-weight: bold !important;
+        border: 2px solid #f39a29 !important;
+      }
+
+      @media screen and (max-width: 768px) {
+        .sidebar {
+          width: 100%;
+          padding: 10px;
+        }
+
+        .main-content {
+          width: 100%;
+        }
+      }
+    </style>
     <script
       src="https://kit.fontawesome.com/4362ce3a8a.js"
       crossorigin="anonymous"
@@ -43,11 +250,11 @@
         <div class="search-bar">
           <div class="search-content">
             <input
-            type="text"
-            id="search-input"
-            placeholder="Escribe para buscar"
-          />
-          <button id="clear-button"><i class="fas fa-times"></i></button>
+              type="text"
+              id="search-input"
+              placeholder="Escribe para buscar"
+            />
+            <button id="clear-button"><i class="fas fa-times"></i></button>
           </div>
 
           <button id="search-button">
@@ -61,8 +268,171 @@
       </div>
     </div>
 
-    <script src="accordion.js"></script>
-    <script src="searchbar.js"></script>
-    <script src="app.js"></script>
+    <script>
+      var acc = document.getElementsByClassName("accordion");
+      var panels = document.getElementsByClassName("panel");
+      var i;
+
+      for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function () {
+          // Cerrar todos los demás paneles
+          for (var j = 0; j < acc.length; j++) {
+            if (acc[j] !== this) {
+              acc[j].classList.remove("active");
+              acc[j].querySelector(".icon").textContent = "+";
+              panels[j].style.maxHeight = null;
+            }
+          }
+
+          // Alternar el estado del panel seleccionado
+          this.classList.toggle("active");
+          var panel = this.nextElementSibling;
+          var icon = this.querySelector(".icon");
+
+          if (panel.style.maxHeight) {
+            panel.style.maxHeight = null;
+            icon.textContent = "+";
+          } else {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+            icon.textContent = "-";
+          }
+        });
+      }
+    </script>
+    <script>
+      const searchInput = document.getElementById("search-input");
+      const clearButton = document.getElementById("clear-button");
+
+      // Mostrar el botón "x" solo si hay texto en el input
+      searchInput.addEventListener("input", function () {
+        if (this.value.length > 0) {
+          clearButton.style.display = "inline"; // Mostrar botón
+        } else {
+          clearButton.style.display = "none"; // Ocultar botón
+        }
+      });
+
+      // Limpiar el input cuando se haga clic en "x"
+      clearButton.addEventListener("click", function () {
+        searchInput.value = "";
+        clearButton.style.display = "none"; // Ocultar botón después de limpiar
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const searchButton = document.getElementById("search-button");
+        const searchInput = document.getElementById("search-input");
+        const clearButton = document.getElementById("clear-button");
+        const booksContainer = document.getElementById("books-container");
+        const pagination = document.getElementById("pagination");
+        const accordions = document.querySelectorAll(".accordion");
+        let currentPage = 1;
+        let totalResults = 0;
+        let resultsPerPage = 10;
+        //acordion de categorias
+        accordions.forEach((accordion) => {
+          accordion.addEventListener("click", function () {
+            this.classList.toggle("active");
+          });
+        });
+
+        document.querySelectorAll(".panel-option").forEach(function (option) {
+          option.addEventListener("click", function () {
+            const textoSeleccionado = this.textContent.trim();
+            fetchBooks(textoSeleccionado, 1);
+          });
+        });
+        //busqueda en la api
+        const fetchBooks = async (query, page = 1) => {
+          const url = `https://www.googleapis.com/books/v1/volumes?q=${query}&startIndex=${
+            (page - 1) * resultsPerPage
+          }&maxResults=${resultsPerPage}`;
+          const response = await fetch(url);
+          const data = await response.json();
+          totalResults = data.totalItems;
+          displayBooks(data.items);
+          displayPagination(totalResults, page, query);
+        };
+        //mostrar las tarjetas con los libros
+        const displayBooks = (books) => {
+          booksContainer.innerHTML = "";
+          books.forEach((book) => {
+            const bookCard = document.createElement("div");
+            bookCard.classList.add("book-card");
+            const coverImg = book.volumeInfo.imageLinks
+              ? book.volumeInfo.imageLinks.thumbnail
+              : "https://via.placeholder.com/150";
+            bookCard.innerHTML = `
+                    <img src="${coverImg}" alt="${book.volumeInfo.title}">
+                    <h3>${book.volumeInfo.title}</h3>
+                    <p>${
+                      book.volumeInfo.authors
+                        ? book.volumeInfo.authors.join(", ")
+                        : "Autor Desconocido"
+                    }</p>
+                `;
+            bookCard.addEventListener("click", () => {
+              window.open(book.volumeInfo.previewLink, "_blank");
+            });
+            booksContainer.appendChild(bookCard);
+          });
+        };
+
+        //mostrar la paginacion
+
+        //ADVERTENCIA
+        //El numero de paginas se calcula con el dato de totalItems que esta en la respuesta del api
+        // pero parece que el dato varia segun startIndex
+
+        const displayPagination = (totalResults, page, query) => {
+          pagination.innerHTML = "";
+
+          const createPageButton = (pageNumber) => {
+            const pageButton = document.createElement("button");
+            pageButton.textContent = pageNumber;
+            if (pageNumber === page) {
+              pageButton.classList.add("active-page-button");
+            }
+            pageButton.addEventListener("click", () => {
+              currentPage = pageNumber;
+              fetchBooks(query, pageNumber);
+            });
+            return pageButton;
+          };
+
+          // Mostrar mensaje si no hay resultados
+          if (totalResults === 0) {
+            pagination.textContent = "No se encontraron resultados.";
+            return;
+          }
+
+          if (page < 5) {
+            for (let i = 1; i <= page; i++) {
+              pagination.appendChild(createPageButton(i));
+            }
+          } else {
+            pagination.appendChild(createPageButton(1));
+            pagination.appendChild(document.createTextNode("..."));
+            for (let i = page - 3; i <= page; i++) {
+              pagination.appendChild(createPageButton(i));
+            }
+          }
+
+          // Agregar un botón "Siguiente" al final
+
+          const nextButton = document.createElement("button");
+          nextButton.textContent = "Siguiente";
+          nextButton.addEventListener("click", () => {
+            currentPage++;
+            fetchBooks(query, currentPage);
+          });
+          pagination.appendChild(nextButton);
+        };
+
+        searchButton.addEventListener("click", () => {
+          fetchBooks(searchInput.value, 1);
+        });
+      });
+    </script>
   </body>
 </html>
